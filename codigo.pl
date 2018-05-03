@@ -1,4 +1,4 @@
-:- use_package(trace).
+%:- use_package(trace).
 
 %cero.
 
@@ -25,8 +25,11 @@ redondearDecimal(NI, redondeoCentesima, NF) :-
 	redondearCentesimas(NI, NF).
 
 redondearDecimas(NI, NF) :-
-	redondearDecimas([_|T], NF)
-	PD = last(NI),
-	[D|T] = PD,
-	T = [C|T2],
-	less_or_equal(s(s(s(s(s(0))))), C).
+	redondearDecimas([_|T], NF),
+	PD is last(NI),
+	Dec is [Dec|PD],
+	write(Dec).
+	
+more_than_five(X) :- less_or_equal(s(s(s(s(0)))), X).
+
+
