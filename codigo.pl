@@ -74,12 +74,15 @@ extComa([A|As],[A|B],C) :-
 %	eval9E(Z).
 
 % Functores ppales del programa
-redondearDecimal(NI, redondeoUnidad, NF) :-
-	redU(NI, NF).
-redondearDecimal(NI, redondeoDecima, NF) :-
-	redD(NI, NF).
-redondearDecimal(NI, redondeoCentesima, NF) :-
-	redC(NI, NF).
+redondearDecimal(NI, redondeoUnidad, redondeo(U,V,W)) :-
+	redU(NI, extraerNF(redondeo(U,V,W), NF)).
+redondearDecimal(NI, redondeoDecima, redondeo(U,V,W)) :-
+	redD(NI, extraerNF(redondeo(U,V,W), NF)).
+redondearDecimal(NI, redondeoCentesima, redondeo(U,V,W)) :-
+	redC(NI,extraerNF(redondeo(U,V,W), NF)).
+	
+%Predicado para extraer el numero redondeado de la estructura
+extraerNF(Struct, NF) :- last(Struct,NF).
 
 % Elegir tipo de redondeo en funcion del numero de digitos en la parte decimal
 redU(NI,NF) :-
