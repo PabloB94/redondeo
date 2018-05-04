@@ -176,60 +176,69 @@ compC(NI,NF) :-
 %%%%%%%%%%%%% EJERCICIO 2 %%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-esCuadradoFantasticoSecreto(Matriz, N):-
-	first(Matriz, F1),
-	first(F1, A),
-	last(F1, B),
-	last(Matriz, F2),
-	first(F2, C),
-	last(F2, D),
-	checkSecret(A,B,C,D,N).
+% Predicado que se hace verdadero cuando los elementos de las esquinas de la 
+% matriz que se le pasa como parametro cumplen la propiedad del numero secreto
 
+esCuadradoFantasticoSecreto(Matriz, N):-
+	first(Matriz, F1),			%Se extrae la primera fila de la matriz
+	first(F1, A),				%Se extrae el primer elemento de la primera fila		
+	last(F1, B),				%Se extrae el ultimo elemento de la primera fila
+	last(Matriz, F2),			%Se extrae la ultima fila de la matriz
+	first(F2, C),				%Se extrae el primer elemento de la ultima fila
+	last(F2, D),				%Se extrae el ultimo elemento de la ultima fila
+	checkSecret(A,B,C,D,N).		%Se comprueba que los elementos extraidos cumplen las condiciones
+
+%Predicado que se hace verdadero si dos numeros en notacion de Peano son iguales.
 equal(0,0).
 equal(s(X),s(Y)) :- equal(X,Y).
 
+%Predicado que extrae el primer elemento de una lista
 first([H|_],H).
+
+%Predicado que extrae el ultimo elemento de una lista
 last([X],X).
-last(_|Z],X) :- last(Z,X).
+last([_|Z],X) :- last(Z,X).
 
-sum(0, X, X).
-sum(s(X), Y, s(Z)) :- sum(X, Y, Z).
+%Predicado que suma dos numeros en notacion de Peano
+add(0, X, X).
+add(s(X), Y, s(Z)) :- add(X, Y, Z).
 
-extraerN(Matriz) :-
-	
+%Estos 6 predicados comprueban si de los 5 elementos, 2 son iguales entre ellos
+%e iguales a la suma de los otros dos, y este resultado es igual al quinto elemento.
+%Todos funcionan igual, solo cambia el orden de los elementos probados.
 
 checkSecret(A,B,C,D,N) :-
-	equal(A,B),
-	sum(C,D,R),
-	equal(A,R),
-	equal(A,N).
+	equal(A,B),  	%Dos de los elementos de las esquinas son iguales
+	add(C,D,R),		%Se suman los elementos de las otras dos esquinas
+	equal(A,R),		%Se comprueba que la suma sea igual a los dos primeros elementos
+	equal(A,N).		%Se comprueba que sean iguales al quinto elemento
 
 checkSecret(A,B,C,D,N) :-
 	equal(A,C),
-	sum(B,D,R),
+	add(B,D,R),
 	equal(A,R),
 	equal(A,N).        
 
 checkSecret(A,B,C,D,N) :-
 	equal(A,D),
-	sum(B,C,R),
+	add(B,C,R),
 	equal(A,R),
 	equal(A,N).
 
 checkSecret(A,B,C,D,N) :-
 	equal(B,C),
-	sum(A,D,R),
+	add(A,D,R),
 	equal(B,R),
 	equal(B,N).
 
 checkSecret(A,B,C,D,N) :-
 	equal(B,D),
-	sum(A,C,R),
+	add(A,C,R),
 	equal(B,R),
 	equal(B,N).
 
 checkSecret(A,B,C,D,N) :-
 	equal(C,D),
-	sum(A,B,R),
+	add(A,B,R),
 	equal(C,R),
 	equal(C,N).
