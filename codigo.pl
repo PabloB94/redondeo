@@ -4,7 +4,6 @@ alumno_prode('Luengo','Gonzalez','Mario','W140280').
 alumno_prode('Santos','Gonzalez','Sergio','W140180').
 alumno_prode('Beltran','de Casso','Pablo','Y160454').
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%% EJERCICIO 1 %%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,112 +67,112 @@ extComa([A|As],[A|B],C) :-
 
 %eval9E(X) :- reverse(X,Xs),
 %	first(Xs,S),
-%	equals(S,s(s(s(s(s(s(s(s(s(0)))))))))),
+%	equals(S,s(s(s(s(s(s(s(s(s(0))))))))),
 %	borraUltimoElem(S,Y),
 %	append(Y,[0],Z)
 %	eval9E(Z).
 
 % Functores ppales del programa
-redondearDecimal(NI, redondeoUnidad, redondeo(U,V,W)) :-
-	redU(NI, extraerNF(redondeo(U,V,W), NF)).
-redondearDecimal(NI, redondeoDecima, redondeo(U,V,W)) :-
-	redD(NI, extraerNF(redondeo(U,V,W), NF)).
-redondearDecimal(NI, redondeoCentesima, redondeo(U,V,W)) :-
-	redC(NI,extraerNF(redondeo(U,V,W), NF)).
-	
-%Predicado para extraer el numero redondeado de la estructura
-extraerNF(Struct, NF) :- last(Struct,NF).
+redondearDecimal(NI, redondeoUnidad, redondeo(redondeoUnidad,numeroOriginal(',',PEntO,PDecO),numeroRedondeado(',',PEntR,PDecR))) :-
+	extComa(NI,PEntO,PDecO),
+	redU(NI,PEntR,PDecR).
+redondearDecimal(NI, redondeoDecima, redondeo(redondeoDecima,numeroOriginal(',',PEntO,PDecO),numeroRedondeado(',',PEntR,PDecR))) :-
+	extComa(NI,PEntO,PDecO),
+	redD(NI,PEntR,PDecR).
+redondearDecimal(NI, redondeoCentesima, redondeo(redondeoCentesima,numeroOriginal(',',PEntO,PDecO),numeroRedondeado(',',PEntR,PDecR))) :-
+	extComa(NI,PEntO,PDecO),
+	redC(NI,PEntR,PDecR).
 
 % Elegir tipo de redondeo en funcion del numero de digitos en la parte decimal
-redU(NI,NF) :-
-	extComa(NI,_,D),
-	count(D,C),
+redU(NI,PEntR,PDecR) :-
+	extComa(NI,PEnt,PDec),
+	count(PDec,C),
 	equals(C,s(0)),
-	compU(NI,NF).
+	compU(PEnt,PDec,PEntR,PDecR).
 
-redU(NI,NF) :-
-	extComa(NI,_,D),
-	count(D,C),
+redU(NI,PEntR,PDecR) :-
+	extComa(NI,PEnt,PDec),
+	count(PDec,C),
 	equals(C, s(s(0))),
-	compD(NI,A),
-	redU(A,NF).
+	compD(PEnt,PDec,PEntR0,PDecR0),
+	append([','],PDecR0,A),
+	append(PEntR0,A,A0),
+	redU(A0,PEntR,PDecR).
 
-redU(NI,NF) :-
-	extComa(NI,_,D),
-	count(D,C),
+redU(NI,PEntR,PDecR) :-
+	extComa(NI,PEnt,PDec),
+	count(PDec,C),
 	equals(C, s(s(s(0)))),
-	compC(NI,A),
-	redU(A,NF).
+	compC(PEnt,PDec,PEntR0,PDecR0),
+	append([','],PDecR0,A),
+	append(PEntR0,A,A0),
+	redU(A0,PEntR,PDecR).
 
-redD(NI,NF) :-
-	extComa(NI,_,D),
-	count(D,C),
+redD(NI,PEntR,PDecR) :-
+	extComa(NI,PEnt,PDec),
+	count(PDec,C),
 	equals(C, s(s(0))),
-	compD(NI,NF).
+	compD(PEnt,PDec,PEntR,PDecR).
 
-redD(NI,NF) :-
-	extComa(NI,_,D),
-	count(D,C),
+redD(NI,PEntR,PDecR) :-
+	extComa(NI,PEnt,PDec),
+	count(PDec,C),
 	equals(C, s(s(s(0)))),
-	compC(NI,A),
-	redD(A,NF).
-
-redC(NI,NF) :-
-	extComa(NI,_,D),
-	count(D,C),
+	compC(PEnt,PDec,PEntR0,PDecR0),
+	append([','],PDecR0,A),
+	append(PEntR0,A,A0),
+	redD(A0,PEntR,PDecR).
+%%
+redC(NI,PEntR,PDecR) :-
+	extComa(NI,PEnt,PDec),
+	count(PDec,C),
 	equals(C, s(s(s(0)))),
-	compC(NI,NF).
+	compC(PEnt,PDec,PEntR,PDecR).
 
 % Functores que realizan el redondeo a la unidad
-compU(NI,NF) :-
-	extComa(NI,NF,D),
-	last(D, S),
-	ls_or_equal(S, s(s(s(s(0))))).
+compU(PEnt,PDec,PEnt,[]) :-
+	last(PDec, L),
+	ls_or_equal(L, s(s(s(s(0))))).
 
-compU(NI,NF) :-
-	extComa(NI,E,D),
-	last(D, S),
-	gt_or_equal(S, s(s(s(s(s(0)))))),
-	reverse(E,R),
-	first(R,X),
-	sum(X, s(0), F),
+compU(PEnt,PDec,PEntR,[]) :-
+	last(PDec, L),
+	gt_or_equal(L, s(s(s(s(s(0)))))),
+	reverse(PEnt,R),
+	first(R,F),
+	sum(F, s(0), S),
 	reverse(R,R2),
 	borraUltimoElem(R2,R3),
-	append(R3,[F],NF).
+	append(R3,[S],PEntR).
 
 % Functores que realizan el redondeo a la decima
-compD(NI,NF) :-
-	extComa(NI,_,D),
-	last(D,S),
-	ls_or_equal(S, s(s(s(s(0))))),
-	borraUltimoElem(NI,NF).
+compD(PEnt,PDec,PEnt,PDecR) :-
+	last(PDec,L),
+	ls_or_equal(L, s(s(s(s(0))))),
+	borraUltimoElem(PDec,PDecR).
 
-compD(NI,NF) :-
-	extComa(NI,_,D),
-	last(D,S),
-	gt_or_equal(S, s(s(s(s(s(0)))))),
-	borraUltimoElem(NI,X),
-	last(X,S0),
-	sum(S0,s(0),C2),
-	borraUltimoElem(X, X2),
-	append(X2,[C2],NF).
+compD(PEnt,PDec,PEnt,PDecR) :-
+	last(PDec,L),
+	gt_or_equal(L, s(s(s(s(s(0)))))),
+	borraUltimoElem(PDec,B),
+	last(B,L0),
+	sum(L0,s(0),S),
+	borraUltimoElem(B, B0),
+	append(B0,[S],PDecR).
 
 % Functores que realizan el redondeo a la centesima
-compC(NI,NF) :-
-	extComa(NI,_,D),
-	last(D,S),
-	ls_or_equal(S, s(s(s(s(0))))),
-	borraUltimoElem(NI, NF).
+compC(PEnt,PDec,PEnt,PDecR) :-
+	last(PDec,L),
+	ls_or_equal(L, s(s(s(s(0))))),
+	borraUltimoElem(PDec,PDecR).
 
-compC(NI,NF) :-
-	extComa(NI,_,D),
-	last(D,S),
-	gt_or_equal(S, s(s(s(s(s(0)))))),
-	borraUltimoElem(NI, X),
-	last(X,S0),
-	sum(S0,s(0),C2),
-	borraUltimoElem(X, X2),
-	append(X2,[C2],NF).
+compC(PEnt,PDec,PEnt,PDecR) :-
+	last(PDec,L),
+	gt_or_equal(L, s(s(s(s(s(0)))))),
+	borraUltimoElem(PDec, B),
+	last(B,L0),
+	sum(L0,s(0),S),
+	borraUltimoElem(B, B0),
+	append(B0,[S],PDecR).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%% EJERCICIO 2 %%%%%%%%%%%%%%%%%%%
@@ -194,13 +193,6 @@ esCuadradoFantasticoSecreto(Matriz, N):-
 %Predicado que se hace verdadero si dos numeros en notacion de Peano son iguales.
 equal(0,0).
 equal(s(X),s(Y)) :- equal(X,Y).
-
-%Predicado que extrae el primer elemento de una lista
-first([H|_],H).
-
-%Predicado que extrae el ultimo elemento de una lista
-last([X],X).
-last([_|Z],X) :- last(Z,X).
 
 %Predicado que suma dos numeros en notacion de Peano
 add(0, X, X).
