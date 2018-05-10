@@ -95,8 +95,8 @@ formatNumber(PEntR,_,0,PE1,_) :-
 	reverse(PEntR,B),
 	overflow(B,C),
 	reverse(C,PE1).
-	
-formatNumber(PEntR,PDecR,s(0),PE1,PD1) :-
+
+formatNumber(PEntR,PDecR,s(0),PE1,[PD1]) :-
 	append(PEntR,PDecR,A),
 	reverse(A,B),
 	overflow(B,C),
@@ -111,11 +111,11 @@ formatNumber(PEntR,PDecR,s(s(0)),PE1,PD1) :-
 	reverse(E,PE1),
 	reverse(D,PD1).
 
-reformatDec([H|T],[H],[T]).
+reformatDec([H|T],H,T).
 
-reformatCent([H|T],[D],[E]) :-
+reformatCent([H|T],D,E) :-
 	reformatDec(T,A,E),
-	append(H,A,D).
+	append([H],[A],D).
 
 % Functores ppales del programa
 redondearDecimal(NI, redondeoUnidad, redondeo(redondeoUnidad,numeroOriginal(',',PEntO,PDecO),numeroRedondeado(',',PEntR,PDecR))) :-
