@@ -75,9 +75,9 @@ behead([_|A],A).
 
 adjust(A1,B) :-
 	behead(A1,A0),
-	behead(A0,A),
 	first(A,F),
 	sum(F,s(0),F1),
+	behead(A0,A),
 	append([F1],A,B).
 
 overflow(A,A) :-
