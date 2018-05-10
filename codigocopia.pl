@@ -71,20 +71,20 @@ extComa([A|As],[A|B],C) :-
 %	append(Y,[0],Z),
 %	eval9E(Z).
 
-overflow(_,[],Acarreo).
-overflow(PEntR,PDecR,Acarreo) :-
-	append(',',[PDecR],A),
-	append(PEntR,A,A0),
-	last(PDecR,L),
-	equals(L,s(s(s(s(s(s(s(s(s(s(0)))))))))),
-	borraUltimoElem(L,B),
-	append(B,[0],A1),
-	
-	last(B,L0),
-	sum(L0,s(0),S),
-	
-	append(B0,[S],A1),
-	overflow(PEntR,A1,).
+overflow(A,D) :-
+	first(A,F),
+	equals(F,s(s(s(s(s(s(s(s(s(s(0))))))))))),
+	[_|A],
+	[_|A],
+	first(A,F1),
+	sum(F1,s(0),F2),
+	append(F2,A,B),
+	overflow(B,C),
+
+formatNumber(PEntR,PDecR,Ndecimales,PE1,PD1) :-
+	append(PEntR,PDecR,A),
+	reverse(A,B),
+	overflow(B,C),
 
 % Functores ppales del programa
 redondearDecimal(NI, redondeoUnidad, redondeo(redondeoUnidad,numeroOriginal(',',PEntO,PDecO),numeroRedondeado(',',PEntR,PDecR))) :-
