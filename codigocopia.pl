@@ -74,11 +74,11 @@ extComa([A|As],[A|B],C) :-
 behead([_|A],A).
 
 adjust(A1,B) :-
-	behead(A1,A0),
+	behead(A1,A),
 	first(A,F),
 	sum(F,s(0),F1),
-	behead(A0,A),
-	append([F1],A,B).
+	behead(A,A2),
+	append([F1],A2,B).
 
 overflow(A,A) :-
 	first(A,F),
