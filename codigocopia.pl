@@ -74,9 +74,9 @@ extComa([A|As],[A|B],C) :-
 adjust(A,B) :-
 	first([_|A],F),
 	sum(F,s(0),F1),
-	append(F1,A,B).
+	append([F1],A,B).
 
-overflow(A,B) :-
+overflow(A,A) :-
 	first(A,F),
 	ls_or_equal(F,s(s(s(s(s(s(s(s(s(0)))))))))).
 
