@@ -12,9 +12,9 @@ nat(0).           % Cero es un numero natural
 nat(s(N)) :-      % El sucesor de un numero natural es un numero natural
 	nat(N).
 
-equals(0,0).      % Functor para evaluar si dos elementos son iguales
-equals(s(X),s(Y)) :-
-	equals(X,Y).
+equal(0,0).      % Functor para evaluar si dos elementos son iguales
+equal(s(X),s(Y)) :-
+	equal(X,Y).
 
 ls_or_equal(0,X) :- nat(X).      % Functor que evalua si un numero es menor o igual que el otro
 ls_or_equal(s(X),s(Y)) :-
@@ -37,9 +37,8 @@ borraUltElemAux([], [], _).
 borraUltElemAux([X1|Xs], [X0|Ys], X0) :-
 	borraUltElemAux(Xs, Ys, X1).
 
-sum(0, X, X).               % Suma 1 en representacion peano al numero a redondear
-sum(s(X), s(0), s(Z)) :-
-	sum(X, s(0), Z).
+add(0, X, X).
+add(s(X), Y, s(Z)) :- add(X, Y, Z).
 
 append([],X,X).             % Concatenacion de listas
 append([X|Y], Z, [X|W]) :-
@@ -53,7 +52,7 @@ reverse([X|Xs],Ys) :-
 count([],0).                % Contador del numero de digitos a cada uno de los lados de la coma
 count([_|T], N) :-
 	count(T, N1),
-	sum(N1, s(0), N).
+	add(N1, s(0), N).
 
 extComa([','|B],[],B).      % Functor que divide el numero dado en parte entera y parte decimal
 extComa([A|As],[A|B],C) :-
@@ -61,12 +60,12 @@ extComa([A|As],[A|B],C) :-
 
 % Intento de resolver el problema del acarreo
 %eval9D(X,L) :- last(X,S),
-%	equals(S,s(s(s(s(s(s(s(s(s(0)))))))))),
+%	equal(S,s(s(s(s(s(s(s(s(s(0)))))))))),
 %	borraUltimoElem(X,L).
 
 %eval9E(X) :- reverse(X,Xs),
 %	first(Xs,S),
-%	equals(S,s(s(s(s(s(s(s(s(s(0))))))))),
+%	equal(S,s(s(s(s(s(s(s(s(s(0))))))))),
 %	borraUltimoElem(S,Y),
 %	append(Y,[0],Z),
 %	eval9E(Z).
@@ -79,7 +78,7 @@ behead([_|A],A).
 adjust(A1,B) :-
 	behead(A1,A),
 	first(A,F),
-	sum(F,s(0),F1),
+	add(F,s(0),F1),
 	behead(A,A2),
 	append([F1],A2,B).
 
@@ -96,23 +95,39 @@ overflow(A,D) :-
 
 formatNumber(PEntR,_,0,PE1,_) :-
 	reverse(PEntR,B),
-	overflow(B,C),
-	reverse(C,PE1).
+	append([0],B,B0),
+	overflow(B0,C),
+	removeZero(C,D),
+	reverse(D,PE1).
 
 formatNumber(PEntR,PDecR,s(0),PE1,[PD1]) :-
 	append(PEntR,PDecR,A),
 	reverse(A,B),
-	overflow(B,C),
-	reformatDec(C,PD1,D),
-	reverse(D,PE1).
+	append([0],B,B0),
+	overflow(B0,C),
+	reformatDec(C,PD0,D),
+	removeZero(PD0,PD1),
+	removeZero(D,PE0),
+	reverse(PE0,PE1).
 
 formatNumber(PEntR,PDecR,s(s(0)),PE1,PD1) :-
 	append(PEntR,PDecR,A),
 	reverse(A,B),
-	overflow(B,C),
+	append([0],B,B0),
+	overflow(B0,C),
 	reformatCent(C,D,E),
-	reverse(E,PE1),
-	reverse(D,PD1).
+	removeZero(E,PE0),
+	reverse(PE0,PE1),
+	removeZero(D,PD0),
+	reverse(PD0,PD1).
+
+removeZero([H|T],B) :-
+	equal(H,0),
+	removeZero(T,B).
+
+removeZero([H|T],B) :-
+	gt_or_equal(H,s(0)),
+	append([H],T,B).
 
 reformatDec([H|T],H,T).
 
@@ -123,7 +138,7 @@ reformatCent([H|T],D,E) :-
 esCero([],[]).
 esCero(PDecR,PDecF) :-
 	last(PDecR,L),
-	equals(L,0),
+	equal(L,0),
 	borraUltimoElem(PDecR,B),
 	esCero(B,PDecF).
 
@@ -153,13 +168,13 @@ redondearDecimal(NI, redondeoCentesima, redondeo(redondeoCentesima,numeroOrigina
 redU(NI,PEntR,PDecR) :-
 	extComa(NI,PEnt,PDec),
 	count(PDec,C),
-	equals(C,s(0)),
+	equal(C,s(0)),
 	compU(PEnt,PDec,PEntR,PDecR).
 
 redU(NI,PEntR,PDecR) :-
 	extComa(NI,PEnt,PDec),
 	count(PDec,C),
-	equals(C, s(s(0))),
+	equal(C, s(s(0))),
 	compD(PEnt,PDec,PEntR0,PDecR0),
 	append([','],PDecR0,A),
 	append(PEntR0,A,A0),
@@ -168,7 +183,7 @@ redU(NI,PEntR,PDecR) :-
 redU(NI,PEntR,PDecR) :-
 	extComa(NI,PEnt,PDec),
 	count(PDec,C),
-	equals(C, s(s(s(0)))),
+	equal(C, s(s(s(0)))),
 	compC(PEnt,PDec,PEntR0,PDecR0),
 	append([','],PDecR0,A),
 	append(PEntR0,A,A0),
@@ -177,13 +192,13 @@ redU(NI,PEntR,PDecR) :-
 redD(NI,PEntR,PDecR) :-
 	extComa(NI,PEnt,PDec),
 	count(PDec,C),
-	equals(C, s(s(0))),
+	equal(C, s(s(0))),
 	compD(PEnt,PDec,PEntR,PDecR).
 
 redD(NI,PEntR,PDecR) :-
 	extComa(NI,PEnt,PDec),
 	count(PDec,C),
-	equals(C, s(s(s(0)))),
+	equal(C, s(s(s(0)))),
 	compC(PEnt,PDec,PEntR0,PDecR0),
 	append([','],PDecR0,A),
 	append(PEntR0,A,A0),
@@ -192,7 +207,7 @@ redD(NI,PEntR,PDecR) :-
 redC(NI,PEntR,PDecR) :-
 	extComa(NI,PEnt,PDec),
 	count(PDec,C),
-	equals(C, s(s(s(0)))),
+	equal(C, s(s(s(0)))),
 	compC(PEnt,PDec,PEntR,PDecR).
 
 % Functores que realizan el redondeo a la unidad
@@ -205,7 +220,7 @@ compU(PEnt,PDec,PEntR,[]) :-
 	gt_or_equal(L, s(s(s(s(s(0)))))),
 	reverse(PEnt,R),
 	first(R,F),
-	sum(F, s(0), S),
+	add(F, s(0), S),
 	reverse(R,R2),
 	borraUltimoElem(R2,R3),
 	append(R3,[S],PEntR).
@@ -221,7 +236,7 @@ compD(PEnt,PDec,PEnt,PDecR) :-
 	gt_or_equal(L, s(s(s(s(s(0)))))),
 	borraUltimoElem(PDec,B),
 	last(B,L0),
-	sum(L0,s(0),S),
+	add(L0,s(0),S),
 	borraUltimoElem(B, B0),
 	append(B0,[S],PDecR).
 
@@ -238,7 +253,7 @@ compC(PEnt,PDec,PEnt,PDecR) :-
 %	borraUltimoElem(PDec, B),
 %	last(B,L0),
 %	eval9D(L0,L1),
-%	sum(L0,s(0),S),
+%	add(L0,s(0),S),
 %	borraUltimoElem(B, B0),
 %	append(B0,[S],PDecR).
 
@@ -247,11 +262,11 @@ compC(PEnt,PDec,PEnt,PDecR) :-
 	gt_or_equal(L, s(s(s(s(s(0)))))),
 	borraUltimoElem(PDec, B),
 	last(B,L0),
-	sum(L0,s(0),S),
+	add(L0,s(0),S),
 	borraUltimoElem(B, B0),
 	append(B0,[S],PDecR).
 
-%%%% Antes de sum hay que evaluar si el num L0 es 9
+%%%% Antes de add hay que evaluar si el num L0 es 9
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%% EJERCICIO 2 %%%%%%%%%%%%%%%%%%%
@@ -269,22 +284,16 @@ esCuadradoFantasticoSecreto(Matriz, N):-
 	last(F2, D),				%Se extrae el ultimo elemento de la ultima fila
 	checkSecret(A,B,C,D,N).		%Se comprueba que los elementos extraidos cumplen las condiciones
 
-%Predicado que se hace verdadero si dos numeros en notacion de Peano son iguales.
-equal(0,0).
-equal(s(X),s(Y)) :- equal(X,Y).
 
-%Predicado que suma dos numeros en notacion de Peano
-add(0, X, X).
-add(s(X), Y, s(Z)) :- add(X, Y, Z).
 
 %Estos 6 predicados comprueban si de los 5 elementos, 2 son iguales entre ellos
-%e iguales a la suma de los otros dos, y este resultado es igual al quinto elemento.
+%e iguales a la adda de los otros dos, y este resultado es igual al quinto elemento.
 %Todos funcionan igual, solo cambia el orden de los elementos probados.
 
 checkSecret(A,B,C,D,N) :-
 	equal(A,B),  	%Dos de los elementos de las esquinas son iguales
-	add(C,D,R),		%Se suman los elementos de las otras dos esquinas
-	equal(A,R),		%Se comprueba que la suma sea igual a los dos primeros elementos
+	add(C,D,R),		%Se addan los elementos de las otras dos esquinas
+	equal(A,R),		%Se comprueba que la adda sea igual a los dos primeros elementos
 	equal(A,N).		%Se comprueba que sean iguales al quinto elemento
 
 checkSecret(A,B,C,D,N) :-
