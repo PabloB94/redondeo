@@ -71,31 +71,50 @@ extComa([A|As],[A|B],C) :-
 %	append(Y,[0],Z),
 %	eval9E(Z).
 
+adjust(A,B) :-
+	first([_|A],F),
+	sum(F,s(0),F1),
+	append(F1,A,B).
+
+overflow(A,B) :-
+	first(A,F),
+	ls_or_equal(F,s(s(s(s(s(s(s(s(s(0)))))))))).
+
 overflow(A,D) :-
 	first(A,F),
 	equals(F,s(s(s(s(s(s(s(s(s(s(0))))))))))),
-	[_|A],
-	[_|A],
-	first(A,F1),
-	sum(F1,s(0),F2),
-	append(F2,A,B),
+	adjust([_|A],B),
 	overflow(B,C),
+	append([0],C,D).
 
-formatNumber(PEntR,PDecR,Ndecimales,PE1,PD1) :-
+formatNumber(PEntR,_,0,PE1,PD1) :-
+	reverse(PEntR,B),
+	overflow(B,C),
+	.
+	
+formatNumber(PEntR,PDecR,s(0),PE1,PD1) :-
 	append(PEntR,PDecR,A),
 	reverse(A,B),
 	overflow(B,C),
+	reformat(C,PD1,D),
+	reverse(D,PE1),
+	.
+
+reformat([H|T],[H],[T]).
 
 % Functores ppales del programa
 redondearDecimal(NI, redondeoUnidad, redondeo(redondeoUnidad,numeroOriginal(',',PEntO,PDecO),numeroRedondeado(',',PEntR,PDecR))) :-
 	extComa(NI,PEntO,PDecO),
-	redU(NI,PEntR,PDecR).
+	redU(NI,PEntR,PDecR),
+	formatNumber(PEntR,PDecR,0,PE1,PD1).
 redondearDecimal(NI, redondeoDecima, redondeo(redondeoDecima,numeroOriginal(',',PEntO,PDecO),numeroRedondeado(',',PEntR,PDecR))) :-
 	extComa(NI,PEntO,PDecO),
-	redD(NI,PEntR,PDecR).
+	redD(NI,PEntR,PDecR),
+	formatNumber(PEntR,PDecR,s(0),PE1,PD1).
 redondearDecimal(NI, redondeoCentesima, redondeo(redondeoCentesima,numeroOriginal(',',PEntO,PDecO),numeroRedondeado(',',PEntR,PDecR))) :-
 	extComa(NI,PEntO,PDecO),
-	redC(NI,PEntR,PDecR).
+	redC(NI,PEntR,PDecR),
+	formatNumber(PEntR,PDecR,s(s(0)),PE1,PD1).
 
 % Elegir tipo de redondeo en funcion del numero de digitos en la parte decimal
 redU(NI,PEntR,PDecR) :-
