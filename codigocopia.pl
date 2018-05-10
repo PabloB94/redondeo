@@ -71,8 +71,12 @@ extComa([A|As],[A|B],C) :-
 %	append(Y,[0],Z),
 %	eval9E(Z).
 
-adjust(A,B) :-
-	first([_|A],F),
+behead([_|A],A).
+
+adjust(A1,B) :-
+	behead(A1,A0),
+	behead(A0,A),
+	first(A,F),
 	sum(F,s(0),F1),
 	append([F1],A,B).
 
@@ -82,8 +86,8 @@ overflow(A,A) :-
 
 overflow(A,D) :-
 	first(A,F),
-	equals(F,s(s(s(s(s(s(s(s(s(s(0))))))))))),
-	adjust([_|A],B),
+	gt_or_equal(F,s(s(s(s(s(s(s(s(s(s(0))))))))))),
+	adjust(A,B),
 	overflow(B,C),
 	append([0],C,D).
 
