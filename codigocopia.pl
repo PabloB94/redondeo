@@ -94,8 +94,8 @@ overflow(A,D) :-
 	append([0],C,D).
 
 formatNumber(PEntR,_,0,PE1,_) :-
-	reverse(PEntR,B),
-	append([0],B,B0),
+	append([0],PEntR,B0),
+	reverse(B0,B),
 	overflow(B0,C),
 	removeZero(C,D),
 	reverse(D,PE1).
@@ -103,21 +103,21 @@ formatNumber(PEntR,_,0,PE1,_) :-
 formatNumber(PEntR,PDecR,s(0),PE1,[PD1]) :-
 	append(PEntR,PDecR,A),
 	reverse(A,B),
-	append([0],B,B0),
+	append(B,[0],B0),
 	overflow(B0,C),
 	reformatDec(C,PD0,D),
 	removeZero(PD0,PD1),
-	removeZero(D,PE0),
-	reverse(PE0,PE1).
+	reverse(D,PE0),
+	removeZero(PE0,PE1).
 
 formatNumber(PEntR,PDecR,s(s(0)),PE1,PD1) :-
 	append(PEntR,PDecR,A),
 	reverse(A,B),
-	append([0],B,B0),
+	append(B,[0],B0),
 	overflow(B0,C),
 	reformatCent(C,D,E),
-	removeZero(E,PE0),
-	reverse(PE0,PE1),
+	reverse(E,PE0),
+	removeZero(PE0,PE1),	
 	removeZero(D,PD0),
 	reverse(PD0,PD1).
 
