@@ -125,9 +125,7 @@ removeZero([H|T],B) :-
 	equal(H,0),
 	removeZero(T,B).
 
-removeZero([H|T],B) :-
-	gt_or_equal(H,s(0)),
-	append([H],T,B).
+removeZero(B,B).
 
 reformatDec([H|T],H,T).
 
