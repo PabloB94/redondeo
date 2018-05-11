@@ -130,17 +130,15 @@ esCero(PDecR,PDecR) :-
 	gt_or_equal(L,0).
 
 % Functores ppales del programa
-redondearDecimal(NI, redondeoUnidad, redondeo(redondeoUnidad,numeroOriginal(',',PEntO,PDecO),numeroRedondeado(',',PEntR,PDecF))) :-
+redondearDecimal(NI, redondeoUnidad, redondeo(redondeoUnidad,numeroOriginal(',',PEntO,PDecO),numeroRedondeado(',',PEntR,PDecR))) :-
 	extComa(NI,PEntO,PDecO),
 	redU(NI,PEntR0,PDecR0),
-	formatNumber(PEntR0,PDecR0,0,PEntR,PDecR),
-	esCero(PDecR,PDecF).
+	formatNumber(PEntR0,PDecR0,0,PEntR,PDecR).
 
-redondearDecimal(NI, redondeoDecima, redondeo(redondeoDecima,numeroOriginal(',',PEntO,PDecO),numeroRedondeado(',',PEntR,PDecF))) :-
+redondearDecimal(NI, redondeoDecima, redondeo(redondeoDecima,numeroOriginal(',',PEntO,PDecO),numeroRedondeado(',',PEntR,PDecR))) :-
 	extComa(NI,PEntO,PDecO),
 	redD(NI,PEntR0,PDecR0),
-	formatNumber(PEntR0,PDecR0,s(0),PEntR,PDecR),
-	esCero(PDecR,PDecF).
+	formatNumber(PEntR0,PDecR0,s(0),PEntR,PDecR).
 
 redondearDecimal(NI, redondeoCentesima, redondeo(redondeoCentesima,numeroOriginal(',',PEntO,PDecO),numeroRedondeado(',',PEntR,PDecR))) :-
 	extComa(NI,PEntO,PDecO),
