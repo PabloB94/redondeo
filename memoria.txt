@@ -534,3 +534,9 @@ COMENTARIOS:
 ------------
 
 Hemos vuelto a realizar la entrega debido a que en el ejercicio 1 interpretamos mal el enunciado, de manera que en el tercer parametro aceptabamos un numero en formato de peano como el numero original, en vez de la estructura redondeo/3.
+
+--------------------------------
+JUSTIFICACION DE LAS DECISIONES:
+--------------------------------
+
+Para el ejercicio 1 una vez realizado la parte del redondeo de los numeros y una vez arreglado el formato con el que hay que devolver el numero redondeado nos encontramos con el problema del acarreo cuando el numero representado en peano es el 9 y pasaria a ser un 10, ya que no podemos representarlo con 10 s(0), por lo que tuvimos que desarrollar los predicados formatNumber/5, overflow/2, adjust/2, esCero/2, evalua0/2, removeZero/2, reformatCent/3 y reformatDec/3. esCero/2 y removeZero/2 los hemos tenido que usar para eliminar los ceros de la parte decimal cuando no deberia haberla. evalua0/2 lo hemos usado para eliminar los ceros que se formaban en la parte izquierda de la parte entera debido a que introducimos ceros para ayudarnos a realizar el desarrollo de la parte del acarreo.
