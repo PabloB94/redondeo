@@ -26,9 +26,9 @@ gt_or_equal(s(X),s(Y)) :-
 
 first([H|_],H).         % El primer elemento de una lista es la cabeza de la lista
 
-last([X],X).            % Functor que devuelve el ultimo elemento de una lista
-last([_|Z],X) :-
-	last(Z,X).
+lastInList([X],X).            % Functor que devuelve el ultimo elemento de una lista
+lastInList([_|Z],X) :-
+	lastInList(Z,X).
 
 borraUltimoElem([X|Xs], Ys) :-         % Functor que borra el ultimo elem de una lista
 	borraUltElemAux(Xs, Ys, X).
@@ -40,14 +40,14 @@ borraUltElemAux([X1|Xs], [X0|Ys], X0) :-
 add(0, X, X).
 add(s(X), Y, s(Z)) :- add(X, Y, Z).
 
-append([],X,X).             % Concatenacion de listas
-append([X|Y], Z, [X|W]) :-
-	append(Y, Z, W).
+concat([],X,X).             % Concatenacion de listas
+concat([X|Y], Z, [X|W]) :-
+	concat(Y, Z, W).
 
-reverse([],[]).             % Invierte una lista
-reverse([X|Xs],Ys) :-
-	reverse(Xs,Zs),
-	append(Zs,[X],Ys).
+flipList([],[]).             % Invierte una lista
+flipList([X|Xs],Ys) :-
+	flipList(Xs,Zs),
+	concat(Zs,[X],Ys).
 
 count([],0).                % Contador del numero de digitos a cada uno de los lados de la coma
 count([_|T], N) :-
@@ -58,29 +58,15 @@ extComa([','|B],[],B).      % Functor que divide el numero dado en parte entera 
 extComa([A|As],[A|B],C) :-
 	extComa(As,B,C).
 
-% Intento de resolver el problema del acarreo
-%eval9D(X,L) :- last(X,S),
-%	equal(S,s(s(s(s(s(s(s(s(s(0)))))))))),
-%	borraUltimoElem(X,L).
-
-%eval9E(X) :- reverse(X,Xs),
-%	first(Xs,S),
-%	equal(S,s(s(s(s(s(s(s(s(s(0))))))))),
-%	borraUltimoElem(S,Y),
-%	append(Y,[0],Z),
-%	eval9E(Z).
-
 behead([_|A],A).
 
-%% Para caso 9.99 en el que tenemos un 10.10 redondeado:
-%% Añadir un adjust haciendo en la primera llamada un count para ver si hay un elemento, en
-%% ese caso no hacer beheads.
+
 adjust(A1,B) :-
 	behead(A1,A),
 	first(A,F),
 	add(F,s(0),F1),
 	behead(A,A2),
-	append([F1],A2,B).
+	concat([F1],A2,B).
 
 overflow(A,A) :-
 	first(A,F),
@@ -91,35 +77,35 @@ overflow(A,D) :-
 	gt_or_equal(F,s(s(s(s(s(s(s(s(s(s(0))))))))))),
 	adjust(A,B),
 	overflow(B,C),
-	append([0],C,D).
+	concat([0],C,D).
 
 formatNumber(PEntR,_,0,PE1,_) :-
-	append([0],PEntR,B0),
-	reverse(B0,B),
+	concat([0],PEntR,B0),
+	flipList(B0,B),
 	overflow(B,C),
 	removeZero(C,D),
-	reverse(D,PE1).
+	flipList(D,PE1).
 
 formatNumber(PEntR,PDecR,s(0),PE1,[PD1]) :-
-	append(PEntR,PDecR,A),
-	reverse(A,B),
-	append(B,[0],B0),
+	concat(PEntR,PDecR,A),
+	flipList(A,B),
+	concat(B,[0],B0),
 	overflow(B0,C),
 	reformatDec(C,PD0,D),
 	removeZero(PD0,PD1),
-	reverse(D,PE0),
+	flipList(D,PE0),
 	removeZero(PE0,PE1).
 
 formatNumber(PEntR,PDecR,s(s(0)),PE1,PD1) :-
-	append(PEntR,PDecR,A),
-	reverse(A,B),
-	append(B,[0],B0),
+	concat(PEntR,PDecR,A),
+	flipList(A,B),
+	concat(B,[0],B0),
 	overflow(B0,C),
 	reformatCent(C,D,E),
-	reverse(E,PE0),
+	flipList(E,PE0),
 	removeZero(PE0,PE1),	
 	removeZero(D,PD0),
-	reverse(PD0,PD1).
+	flipList(PD0,PD1).
 
 removeZero(B,B).
 removeZero([H|T],B) :-
@@ -130,17 +116,17 @@ reformatDec([H|T],H,T).
 
 reformatCent([H|T],D,E) :-
 	reformatDec(T,A,E),
-	append([H],[A],D).
+	concat([H],[A],D).
 
 esCero([],[]).
 esCero(PDecR,PDecF) :-
-	last(PDecR,L),
+	lastInList(PDecR,L),
 	equal(L,0),
 	borraUltimoElem(PDecR,B),
 	esCero(B,PDecF).
 
 esCero(PDecR,PDecR) :-
-	last(PDecR,L),
+	lastInList(PDecR,L),
 	gt_or_equal(L,0).
 
 evalua0(PEntR,PEntR) :-
@@ -217,59 +203,49 @@ redC(NI,PEntR,PDecR) :-
 
 % Functores que realizan el redondeo a la unidad
 compU(PEnt,PDec,PEnt,[]) :-
-	last(PDec, L),
+	lastInList(PDec, L),
 	ls_or_equal(L, s(s(s(s(0))))).
 
 compU(PEnt,PDec,PEntR,[]) :-
-	last(PDec, L),
+	lastInList(PDec, L),
 	gt_or_equal(L, s(s(s(s(s(0)))))),
-	reverse(PEnt,R),
+	flipList(PEnt,R),
 	first(R,F),
 	add(F, s(0), S),
-	reverse(R,R2),
+	flipList(R,R2),
 	borraUltimoElem(R2,R3),
-	append(R3,[S],PEntR).
+	concat(R3,[S],PEntR).
 
 % Functores que realizan el redondeo a la decima
 compD(PEnt,PDec,PEnt,PDecR) :-
-	last(PDec,L),
+	lastInList(PDec,L),
 	ls_or_equal(L, s(s(s(s(0))))),
 	borraUltimoElem(PDec,PDecR).
 
 compD(PEnt,PDec,PEnt,PDecR) :-
-	last(PDec,L),
+	lastInList(PDec,L),
 	gt_or_equal(L, s(s(s(s(s(0)))))),
 	borraUltimoElem(PDec,B),
-	last(B,L0),
+	lastInList(B,L0),
 	add(L0,s(0),S),
 	borraUltimoElem(B, B0),
-	append(B0,[S],PDecR).
+	concat(B0,[S],PDecR).
 
 % Functores que realizan el redondeo a la centesima
 compC(PEnt,PDec,PEnt,PDecR) :-
-	last(PDec,L),
+	lastInList(PDec,L),
 	ls_or_equal(L, s(s(s(s(0))))),
 	borraUltimoElem(PDec,PDecR).
 
-% Caso en el que hay uno o mas 9
-%compC(PEnt,PDec,PEnt,PDecR) :-
-%	last(PDec,L),
-%	gt_or_equal(L, s(s(s(s(s(0)))))),
-%	borraUltimoElem(PDec, B),
-%	last(B,L0),
-%	eval9D(L0,L1),
-%	add(L0,s(0),S),
-%	borraUltimoElem(B, B0),
-%	append(B0,[S],PDecR).
 
 compC(PEnt,PDec,PEnt,PDecR) :-
-	last(PDec,L),
+	lastInList(PDec,L),
 	gt_or_equal(L, s(s(s(s(s(0)))))),
 	borraUltimoElem(PDec, B),
-	last(B,L0),
+	lastInList(B,L0),
 	add(L0,s(0),S),
 	borraUltimoElem(B, B0),
-	append(B0,[S],PDecR).
+	concat(B0,[S],PDecR).
 
 %%%% Antes de add hay que evaluar si el num L0 es 9
 
@@ -283,10 +259,10 @@ compC(PEnt,PDec,PEnt,PDecR) :-
 esCuadradoFantasticoSecreto(Matriz, N):-
 	first(Matriz, F1),			%Se extrae la primera fila de la matriz
 	first(F1, A),				%Se extrae el primer elemento de la primera fila		
-	last(F1, B),				%Se extrae el ultimo elemento de la primera fila
-	last(Matriz, F2),			%Se extrae la ultima fila de la matriz
+	lastInList(F1, B),				%Se extrae el ultimo elemento de la primera fila
+	lastInList(Matriz, F2),			%Se extrae la ultima fila de la matriz
 	first(F2, C),				%Se extrae el primer elemento de la ultima fila
-	last(F2, D),				%Se extrae el ultimo elemento de la ultima fila
+	lastInList(F2, D),				%Se extrae el ultimo elemento de la ultima fila
 	checkSecret(A,B,C,D,N).		%Se comprueba que los elementos extraidos cumplen las condiciones
 
 
