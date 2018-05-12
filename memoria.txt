@@ -204,7 +204,16 @@ PRUEBAS DE LA PRACTICA (EJERCICIO 2):
 -------------------------------------
 
 ?- esCuadradoFantasticoSecreto([[s(s(0)),s(s(s(s(0)))),s(s(s(s(s(s(0))))))], [ s(s(s(s(0)))),s(s(s(s(s(s(0)))))),s(s(0))], [s(s(s(s(s(s(0)))))),s(s(0)),s(s(s(s(0))))]],s(s(s(s(s(s(0))))))).
-Yes
+
+yes
+
+?- esCuadradoFantasticoSecreto([[s(s(0)),s(s(s(s(0)))),s(s(s(s(s(s(0)))))),s(s(s(s(s(s(s(s(0))))))))], [s(s(s(s(0)))),s(s(s(s(s(s(0)))))),s(s(s(s(s(s(s(s(0)))))))),s(s(0))], [s(s(s(s(s(s(0)))))),s(s(s(s(s(s(s(s(0)))))))),s(s(0)),s(s(s(s(0))))], [s(s(s(s(s(s(s(s(0)))))))),s(s(0)),s(s(s(s(0)))),s(s(s(s(s(s(0))))))]],s(s(s(s(s(s(s(s(0))))))))).
+
+yes
+
+?- esCuadradoFantasticoSecreto([[s(s(s(s(s(s(0)))))),s(s(s(s(0)))),s(s(s(s(s(s(s(s(0)))))))),s(s(0))], [s(s(0)),s(s(s(s(s(s(0)))))),s(s(s(s(0)))),s(s(s(s(s(s(s(s(0))))))))], [s(s(s(s(s(s(s(s(0)))))))),s(s(0)),s(s(s(s(s(s(0)))))),s(s(s(s(0))))], [s(s(s(s(0)))),s(s(s(s(s(s(s(s(0)))))))),s(s(0)),s(s(s(s(s(s(0))))))]],s(s(s(s(s(s(0))))))).
+
+yes
 
 ------------
 COMENTARIOS:
