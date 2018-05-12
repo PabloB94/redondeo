@@ -184,40 +184,35 @@ redU(NI,PEntR,PDecR) :-
 redU(NI,PEntR,PDecR) :-
 	extComa(NI,PEnt,PDec),
 	count(PDec,C),
-	equal(C, s(s(0))),
-	compD(PEnt,PDec,PEntR0,PDecR0),
-	append([','],PDecR0,A),
-	append(PEntR0,A,A0),
-	redU(A0,PEntR,PDecR).
+	equal(C,s(s(0))),
+	borraUltimoElem(PDec,B),
+	compU(PEnt,B,PEntR,PDecR).
 
 redU(NI,PEntR,PDecR) :-
 	extComa(NI,PEnt,PDec),
 	count(PDec,C),
-	equal(C, s(s(s(0)))),
-	compC(PEnt,PDec,PEntR0,PDecR0),
-	append([','],PDecR0,A),
-	append(PEntR0,A,A0),
-	redU(A0,PEntR,PDecR).
+	equal(C,s(s(s(0)))),
+	borraUltimoElem(PDec,B),
+	borraUltimoElem(B,B0),
+	compU(PEnt,B0,PEntR,PDecR).
 
 redD(NI,PEntR,PDecR) :-
 	extComa(NI,PEnt,PDec),
 	count(PDec,C),
-	equal(C, s(s(0))),
+	equal(C,s(s(0))),
 	compD(PEnt,PDec,PEntR,PDecR).
 
 redD(NI,PEntR,PDecR) :-
 	extComa(NI,PEnt,PDec),
 	count(PDec,C),
-	equal(C, s(s(s(0)))),
-	compC(PEnt,PDec,PEntR0,PDecR0),
-	append([','],PDecR0,A),
-	append(PEntR0,A,A0),
-	redD(A0,PEntR,PDecR).
+	equal(C,s(s(s(0)))),
+	borraUltimoElem(PDec,B),
+	compD(PEnt,B,PEntR,PDecR).
 
 redC(NI,PEntR,PDecR) :-
 	extComa(NI,PEnt,PDec),
 	count(PDec,C),
-	equal(C, s(s(s(0)))),
+	equal(C,s(s(s(0)))),
 	compC(PEnt,PDec,PEntR,PDecR).
 
 % Functores que realizan el redondeo a la unidad
