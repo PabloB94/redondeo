@@ -7,6 +7,18 @@ cierre(LinkList,Result):-
 	noRepeatedElements(LinkList),
 	findChain(LinkList,LinkList,Result).
 
+	
+cierreUnico(LinkList,Result):-
+	setof(ChainSet,(cierre(LinkList,ChainSet)),Duplicates),
+	deleteDuplicates(Duplicates,NoDuplicates),
+	member(Result,NoDuplicates).
+
+	
+cierreMinimo(LinkList,Length):-
+	setof(ChainSet,(cierreUnico(LinkList,ChainSet)),ResultSet),
+	minLength(ResultSet,Length).
+
+
 noRepeatedElements([]).
 noRepeatedElements([X|Xs]):-
 	checkEqual(X,Xs),
@@ -31,13 +43,13 @@ noRepeatedLinks(A,B):-
 findChain([X|_],LinkList,Result):-
 	delete(LinkList,X,ShortList),
     	makeChain(X,ShortList,Chain),
-    	agregarInicio(X,Chain,Result).  
+    	addFirst(X,Chain,Result).  
     
 findChain([_|Xs],LinkList,Result):- 
 	findChain(Xs,LinkList,Result).
 
 
-agregarInicio(X,Lista,[X|Lista]).
+addFirst(X,List,[X|List]).
 
 
 makeChain(X,ShortList,[NewLink|Result]):-
@@ -70,11 +82,6 @@ updateList(A,B,C,[X|D]):-
 	delete(A,X,Z),
 	updateList(Z,Y,C,D).
 
-cierreUnico(LinkList,Result):-
-	setof(ChainSet,(cierre(LinkList,ChainSet)),Duplicates),
-	deleteDuplicates(Duplicates,NoDuplicates),
-	member(Result,NoDuplicates).
-
 
 deleteDuplicates([],[]).
 
@@ -90,16 +97,12 @@ deleteDuplicates([X|Xs], [X|NoDuplicates]):-
 	deleteDuplicates(Xs,NoDuplicates).
 
 
-findDuplicates(Lista, [Resultado|_]):- 
-	permutation(Resultado,Lista).
+findDuplicates(List, [X|_]):- 
+	permutation(X,List).
 	
-findDuplicates(Lista,[_|Resultado]):- 
-	findDuplicates(Lista,Resultado).
+findDuplicates(List,[_|X]):- 
+	findDuplicates(List,X).
 
-
-cierreMinimo(LinkList,Length):-
-	setof(ChainSet,(cierreUnico(LinkList,ChainSet)),ResultSet),
-	minLength(ResultSet,Length).
 
 minLength([H|T],Minimo):-
 	length(H,A),
@@ -110,21 +113,7 @@ minLength([],Min,Min).
 
 minLength([H|T],MinSoFar,Minimum):-
 	length(H,L),
-	Min is min(L,MinSoFar),
+	((L<MinSoFar,
+	Min is L);
+	(Min is MinSoFar)),
 	minLength(T,Min,Minimum).
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
