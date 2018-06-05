@@ -7,12 +7,9 @@ alumno_prode('Luengo','Gonzalez','Mario','W140280').
 alumno_prode('Santos','Gonzalez','Sergio','W140180').
 alumno_prode('Beltran','de Casso','Pablo','Y160454').
 
-
-
 cierre(LinkList,Result):-
-    noRepeatedElements(LinkList),
-    findChain(LinkList,LinkList,Result).
-
+	noRepeatedElements(LinkList),
+	findChain(LinkList,LinkList,Result).
 
 % noRepeatedElements/1: relacion que es cierta sii no hay ningun eslabon repetido en su primer argumento.
 noRepeatedElements([]).
@@ -20,11 +17,13 @@ noRepeatedElements([X|Xs]):-
 	checkEqual(X,Xs),
     	noRepeatedElements(Xs).
 
+
 % checkEqual/2: relacion que es cierta sii el eslabon X no se
 % repite en la listade eslabones.
 checkEqual(_,[]).
-checkEqual(X,[Y|Xs]):- noRepeatedLinks(X,Y),
-    checkEqual(X,Xs).
+checkEqual(X,[Y|Xs]):- 
+	noRepeatedLinks(X,Y),
+	checkEqual(X,Xs).
 
 
 % equalLink/2: relacion que es cierta sii los dos eslabones tienen los mismos extremos.
@@ -40,10 +39,10 @@ noRepeatedLinks(A,B):-
 findChain([X|_],LinkList,Result):-
 	delete(LinkList,X,ShortList),
     	makeChain(X,ShortList,Chain),
-    	agregarInicio(X,Chain,Result).
+    	agregarInicio(X,Chain,Result).  
     
-    
-findChain([_|Xs],LinkList,Result):-findChain(Xs,LinkList,Result).
+findChain([_|Xs],LinkList,Result):- 
+	findChain(Xs,LinkList,Result).
 
 
 agregarInicio(X,Lista,[X|Lista]).
@@ -53,11 +52,12 @@ makeChain(X,ShortList,[NewLink|Result]):-
 	arg(1,X,A),
 	arg(2,X,B),
 	updateList(ShortList,A,B,[NewLink|Result]).
-        
+	        
 makeChain(X,ShortList,[NewLink|Result]):-
 	arg(1,X,A),
 	arg(2,X,B),
 	updateList(ShortList,B,A,[NewLink|Result]).
+
 
 linkMatch([NewLink|_],A,NewLink,NewEnd):-
 	(arg(1,NewLink,B),
@@ -67,43 +67,72 @@ linkMatch([NewLink|_],A,NewLink,NewEnd):-
 	A==B,
 	arg(1,NewLink,NewEnd)).
 	
-linkMatch([_|T],A,Y,NewEnd):-linkMatch(T,A,Y,NewEnd).
+linkMatch([_|T],A,Y,NewEnd):-
+	linkMatch(T,A,Y,NewEnd).
 
 
 updateList(_,X,X,[]).
-updateList(A,B,C,[X|D]) :-
+
+updateList(A,B,C,[X|D]):-
 	linkMatch(A,B,X,Y),
 	delete(A,X,Z),
 	updateList(Z,Y,C,D).
 
 cierreUnico(LinkList,Result):-
-    setof(ChainSet,(cierre(LinkList,ChainSet)),Duplicates),
-    deleteDuplicates(Duplicates,NoDuplicates),
-    member(Result,NoDuplicates).
+	setof(ChainSet,(cierre(LinkList,ChainSet)),Duplicates),
+	deleteDuplicates(Duplicates,NoDuplicates),
+	member(Result,NoDuplicates).
+
 
 deleteDuplicates([],[]).
+
 deleteDuplicates([X|Xs], NoDuplicates):-
-    permutation(X,Y),
-    findDuplicates(Y,Xs),
-    deleteDuplicates(Xs,NoDuplicates),!.
+	permutation(X,Y),
+	findDuplicates(Y,Xs),
+	deleteDuplicates(Xs,NoDuplicates),
+	!.
+	
 deleteDuplicates([X|Xs], [X|NoDuplicates]):-
-    permutation(X,Y),
-    not(findDuplicates(Y,Xs)),
-    deleteDuplicates(Xs,NoDuplicates).
-
-findDuplicates(Lista, [Resultado|_]):-permutation(Resultado,Lista).
-findDuplicates(Lista,[_|Resultado]):-findDuplicates(Lista,Resultado).
+	permutation(X,Y),
+	not(findDuplicates(Y,Xs)),
+	deleteDuplicates(Xs,NoDuplicates).
 
 
-cierreMinimo(LinkList,Min):-
-    bagof(ChainSet,(cierreUnico(LinkList,ChainSet)),ListaResultado),
-    shortest(ListaResultado,Min).
+findDuplicates(Lista, [Resultado|_]):- 
+	permutation(Resultado,Lista).
+	
+findDuplicates(Lista,[_|Resultado]):- 
+	findDuplicates(Lista,Resultado).
 
-shortest([X|Xs],Minimo):-length(X,A),shortest1(Xs,A,Minimo).
-shortest1([],Minimo,Minimo).
-shortest1([X|Xs],Antiguo,Minimo):- length(X,A),A<Antiguo,
-	length(X,Minimo1),
-	shortest1(Xs,Minimo1,Minimo).
-shortest1([X|Xs],Antiguo,Minimo):- length(X,A),not(A<Antiguo),
-	shortest1(Xs,Antiguo,Minimo).
+
+cierreMinimo(LinkList,Length):-
+	setof(ChainSet,(cierreUnico(LinkList,ChainSet)),ResultSet),
+	minLength(ResultSet,Length).
+
+minLength([H|T],Minimo):-
+	length(H,A),
+	minLength(T,A,Minimo).
+
+
+minLength([],Min,Min).
+
+minLength([H|T],MinSoFar,Minimum):-
+	length(H,L),
+	Min is min(L,MinSoFar),
+	minLength(T,Min,Minimum).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
