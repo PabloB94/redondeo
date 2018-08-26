@@ -3,9 +3,9 @@
 INTEGRANTES DEL GRUPO:
 ----------------------
 
-- Mario Luengo Gonzalez - W140280
-- Sergio Santos Gonzalez - W140180
-- Pablo Beltran de Casso - Y160454
+- Mario Luengo Gonzalez 
+- Sergio Santos Gonzalez
+- Pablo Beltran de Casso 
 
 ------------------------------------
 CODIGO DE LA PRACTICA (EJERCICIO 1):
